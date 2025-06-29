@@ -21,7 +21,7 @@ app.post("/api/tokens", (req, res) => {
   if (!token) return res.status(400).json({ message: "Token kosong!" });
 
   let data = JSON.parse(fs.readFileSync(tokensFile));
-  if (data.tokens.includes(token)) return res.status(400).json({ message: "Token sudah ada!" });
+  if (data.tokens.find(t => t.token === token)) return res.status(400).json({ message: "Token sudah ada!" });
 
   data.tokens.push(token);
   fs.writeFileSync(tokensFile, JSON.stringify(data, null, 2));
@@ -34,9 +34,9 @@ app.delete("/api/tokens", (req, res) => {
   if (!token) return res.status(400).json({ message: "Token kosong!" });
 
   let data = JSON.parse(fs.readFileSync(tokensFile));
-  if (!data.tokens.includes(token)) return res.status(400).json({ message: "Token tidak ditemukan!" });
+  if (!data.tokens.find(t => t.token === token)) return res.status(400).json({ message: "Token tidak ditemukan!" });
 
-  data.tokens = data.tokens.filter(t => t !== token);
+  data.tokens = data.tokens.filter(t => t.token !== token);
   fs.writeFileSync(tokensFile, JSON.stringify(data, null, 2));
   res.json({ message: "✅ Token dihapus!" });
 });
