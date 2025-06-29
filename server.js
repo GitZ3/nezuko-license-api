@@ -41,6 +41,19 @@ app.delete("/api/tokens", (req, res) => {
   res.json({ message: "✅ Token dihapus!" });
 });
 
+// Cek Token Nezuko
+app.get("/cekToken", (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).json({ message: "Token kosong!" });
+
+  let data = JSON.parse(fs.readFileSync(tokensFile));
+  if (data.tokens.includes(token)) {
+    return res.json({ message: `✅ Token ${token} valid.` });
+  } else {
+    return res.json({ message: `❌ Token ${token} tidak ditemukan.` });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`✅ License API Server jalan di port ${PORT}`);
 });
