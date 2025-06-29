@@ -59,6 +59,20 @@ app.get("/cekToken", (req, res) => {
   }
 });
 
+// Cek Status Token
+app.put("/api/tokenstatus", (req, res) => {
+  const { token, status } = req.body;
+  if (!token || !status) return res.status(400).json({ message: "Token & status wajib." });
+
+  let data = JSON.parse(fs.readFileSync(tokensFile));
+  const found = data.tokens.find(t => t.token === token);
+  if (!found) return res.status(404).json({ message: "Token tidak ditemukan." });
+
+  found.status = status;
+  fs.writeFileSync(tokensFile, JSON.stringify(data, null, 2));
+  res.json({ message: `✅ Status token ${token} diubah ke ${status}.` });
+});
+
 app.listen(PORT, () => {
   console.log(`✅ License API Server jalan di port ${PORT}`);
 });
