@@ -47,10 +47,15 @@ app.get("/cekToken", (req, res) => {
   if (!token) return res.status(400).json({ message: "Token kosong!" });
 
   let data = JSON.parse(fs.readFileSync(tokensFile));
-  if (data.tokens.includes(token)) {
-    return res.json({ message: `✅ Token ${token} valid.` });
+  const found = data.tokens.find(t => t.token === token);
+  if (!found) {
+    return res.json({ message: "❌ Token tidak ditemukan.", valid: false });
+  }
+
+  if (found.status === "valid") {
+    return res.json({ message: `✅ Token ${token} valid.`, valid: true });
   } else {
-    return res.json({ message: `❌ Token ${token} tidak ditemukan.` });
+    return res.json({ message: `❌ Token ${token} tidak aktif.`, valid: false });
   }
 });
 
